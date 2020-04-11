@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+FROM sergivalverde/pytorch-latest:ubuntu18.04
+MAINTAINER Sergi Valverde <svalverde@eia.udg.edu>
 
 # ------------------------------------------------------------------------------
 # Install basic libraries + miniconda
@@ -35,6 +36,10 @@ RUN pip install --upgrade pip
 # ------------------------------------------------------------------------------
 RUN pip install pyxnat nibabel pydicom requests
 
+# install fastai
+RUN conda install -c pytorch -c fastai fastai
+
+
 # ------------------------------------------------------------------------------
 # container standard dirs
 # ------------------------------------------------------------------------------
@@ -50,3 +55,4 @@ ENV PATH=/src:${PATH}
 # Add all source files inside image
 # ------------------------------------------------------------------------------
 ADD run_container.py /src/
+ADD inference /src/inference
