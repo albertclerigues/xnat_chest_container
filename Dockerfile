@@ -1,4 +1,4 @@
-FROM sergivalverde/pytorch-latest:ubuntu18.04
+FROM ubuntu:18.04
 MAINTAINER Sergi Valverde <svalverde@eia.udg.edu>
 
 # ------------------------------------------------------------------------------
@@ -29,12 +29,14 @@ RUN pip install --upgrade pip
 #RUN wget -O- http://neuro.debian.net/lists/xenial.us-tn.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
 #RUN apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
 #RUN apt-get update
-#RUN apt-get --assume-yes install mricron fsl fsl-mni152-templates dcm2niix dcmtk
+#RUN apt-get --assume-yes install mricron fsl fsl-mni152-templates dcm2niix dcmtk imagemagick
+RUN apt update && apt install -y libsm6 libxext6
 
 # ------------------------------------------------------------------------------
 # xnat libraries
 # ------------------------------------------------------------------------------
-RUN pip install pyxnat nibabel pydicom requests
+RUN pip install pyxnat nibabel pydicom requests opencv-python
+RUN conda install gdcm -c conda-forge
 
 # install fastai
 RUN conda install -c pytorch -c fastai fastai
@@ -48,6 +50,7 @@ RUN mkdir /input  # xnat inputs mount
 RUN mkdir /output # xnat outputs mount
 RUN mkdir /data # user intermediate data
 RUN mkdir /src
+RUN mkdir /src/tmp
 RUN touch /src/__init__.py
 ENV PATH=/src:${PATH}
 
