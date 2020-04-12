@@ -1,0 +1,348 @@
+{
+  "name": "COVID-19 prediction",
+  "label": "chest-xray-session-inference",
+  "description": "COVID19 inference",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "info-url": "",
+  "image": "sergivalverde/xchest-xray-inference:latest",
+  "type": "docker",
+  "command-line": "python /src/run_container.py --project #project_id# --subject #subject_id# --experiment #session_id#",
+  "mounts": [
+    {
+      "name": "dicom-in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "classify-out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "project_id",
+      "description": "project ID",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "subject_id",
+      "description": "project ID",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "session_id",
+      "description": "project ID",
+      "type": "string",
+      "matcher": null,
+      "default-value": null,
+      "required": true,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "description": "The resulting output files",
+      "required": true,
+      "mount": "classify-out",
+      "path": null,
+      "glob": null
+    }
+  ],
+  "xnat": [
+    {
+      "name": "classify-chest-xray-session-inference",
+      "label": "classify-covid-session-inference",
+      "description": "Classify wether a patient has COVID19 or not based on his chest xray session",
+      "contexts": [
+        "xnat:crSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": "'DICOM' in @.scans[*].resources[*].label",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "dicom-in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "session_id",
+          "description": "The ID of the selected session",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "session_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null
+        },
+        {
+          "name": "subject_id",
+          "description": "The ID of the selected subject",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "subject_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "subject-id",
+          "via-setup-command": null
+        },
+        {
+          "name": "project_id",
+          "description": "The ID of the selected project",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "project_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "via-setup-command": null
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "result-resource",
+          "accepts-command-output": "result",
+          "via-wrapup-command": null,
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "RESULT",
+          "format": null
+        }
+      ]
+    },
+    {
+      "name": "COVID-19 prediction",
+      "label": "COVID-19 prediction",
+      "description": "Classify wether a patient has COVID19 or not based on his chest xray session",
+      "contexts": [
+        "xnat:crSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": "'DICOM' in @.scans[*].resources[*].label",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "dicom-in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "session_id",
+          "description": "The ID of the selected session",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "session_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null
+        },
+        {
+          "name": "subject_id",
+          "description": "The ID of the selected subject",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "subject_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "subject-id",
+          "via-setup-command": null
+        },
+        {
+          "name": "project_id",
+          "description": "The ID of the selected project",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "project_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "via-setup-command": null
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "result-resource",
+          "accepts-command-output": "result",
+          "via-wrapup-command": null,
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "RESULT",
+          "format": null
+        }
+      ]
+    },
+    {
+      "name": "COVID-19 chest x-ray prediction",
+      "label": "COVID-19 x-ray prediction",
+      "description": "Classify wether a patient has COVID19 or not based on his chest xray session",
+      "contexts": [
+        "xnat:crSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "matcher": "'DICOM' in @.scans[*].resources[*].label",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "dicom-in",
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "session_id",
+          "description": "The ID of the selected session",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "session_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null
+        },
+        {
+          "name": "subject_id",
+          "description": "The ID of the selected subject",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "subject_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "subject-id",
+          "via-setup-command": null
+        },
+        {
+          "name": "project_id",
+          "description": "The ID of the selected project",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": "project_id",
+          "provides-files-for-command-mount": null,
+          "user-settable": false,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "via-setup-command": null
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "result-resource",
+          "accepts-command-output": "result",
+          "via-wrapup-command": null,
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "RESULT",
+          "format": null
+        }
+      ]
+    }
+  ]
+}
