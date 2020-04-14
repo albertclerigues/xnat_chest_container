@@ -14,6 +14,7 @@ def initialize_model(model_name='resnet50_512'):
 
     return the model
     """
+
     current_path = os.path.dirname(os.path.abspath( __file__ ))
 
     if model_name == 'resnet50_512':
@@ -47,6 +48,7 @@ def load_image(image_path):
 
 
 def run_inference(input_scan, model_name='resnet50_512'):
+
     """
     Run the infered model
     inputs:
@@ -72,6 +74,7 @@ def run_inference(input_scan, model_name='resnet50_512'):
     return pred
 
 
+
 if __name__ == "__main__":
     """
     COVID-19 x-ray classification
@@ -91,6 +94,7 @@ if __name__ == "__main__":
     prob = run_inference(opt.input_scan, opt.model)
 
     scan_name = os.path.split(opt.input_scan)[1]
+
     print('--------------------------------------------------')
     print('SCAN: {0} ----> PROB: {1:.2f} %'.format(scan_name, prob * 100))
     print('--------------------------------------------------')

@@ -42,6 +42,10 @@ RUN conda install gdcm -c conda-forge
 RUN conda install -c pytorch -c fastai fastai
 
 
+# install fastai
+RUN conda install -c pytorch -c fastai fastai
+
+
 # ------------------------------------------------------------------------------
 # container standard dirs
 # ------------------------------------------------------------------------------
