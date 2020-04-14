@@ -1,7 +1,6 @@
 import argparse
-import pyxnat
 import os
-import pydicom
+from pyxnat import Interface
 from inference.run_inference import run_inference
 
 
@@ -9,6 +8,15 @@ def main(args):
     xnat_host = os.environ['XNAT_HOST']
     xnat_user = os.environ['XNAT_USER']
     xnat_pass = os.environ['XNAT_PASS']
+
+    # define model to used
+    model = 'resnet50_512'
+
+    # print some loggin information
+    print('--------------------------------------------------')
+    print('model name:', model)
+    print('--------------------------------------------------')
+    print(' ')
 
     # Find the ID of each scan as well as the corresponding DICOMS
     scan_ids = os.listdir('/input/SCANS')
@@ -19,32 +27,37 @@ def main(args):
                         for x in os.listdir(scan_base)
                         if x.endswith('.dcm')]  # [0] SELECT ONLY ONE DCM!
 
-    # Get one covid probability for each scan_id (deep learning much?)
-        # compute the probability for the current scan to COVID19
     covid_probs = []
 
-    for scan in scan_dicoms:
-        # load the dcm to RGB
-        input_dcm = pydicom.dcmread(scan_dicoms)
-        input_scan = input_dcm.pixel_array
+    print('--------------------------------------------------')
+    print('Inference')
 
-        # run inference in the current scan
-        prob = run_inference(input_scan)
+    for scan in scan_dicoms:
+
+        # perform inference
+        prob = run_inference(scan)
         covid_probs.append(prob)
 
+    print('--------------------------------------------------')
+
     # Write results as a note to each scan
-    session = pyxnat.Interface(server=xnat_host,
-                               user=xnat_user,
-                               password=xnat_pass)
+    session = Interface(server=xnat_host,
+                        user=xnat_user,
+                        password=xnat_pass)
 
     for scan_id, dicom_filepath, covid_prob in zip(scan_ids,
                                                    scan_dicoms,
                                                    covid_probs):
+        print('--------------------------------------------------')
         scan = session.select('/projects/{}/subjects/{}/experiments/{}/scans/{}'.format(
             args.project, args.subject, args.experiment, scan_id))
-        scan.attrs.set('xnat:imageScanData/note', 'p(COVID) {}% at {}'.format(
-            covid_prob,
-            dicom_filepath))
+        scan.attrs.set('xnat:imageScanData/note',
+                       'p(COVID): {0:.2f}%'.format(covid_prob))
+        print('DICOM PATH', dicom_filepath)
+        print("SCAN ID:", scan_id)
+        print("predicted probability:", covid_prob)
+        print('--------------------------------------------------')
+    # disconnect the session
     session.disconnect()
 
 

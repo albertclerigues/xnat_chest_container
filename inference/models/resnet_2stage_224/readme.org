@@ -1,0 +1,7 @@
+* ResNET50 model with 2 stage training
+
+- Author: Sergi Valverde
+
+
+* Idea:
+- The model is trained first to classify between pneumonia and normal cases. Afterwards, it's fine-tuned to differentiate between covid19 and other pathologies.
