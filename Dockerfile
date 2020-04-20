@@ -42,10 +42,6 @@ RUN conda install gdcm -c conda-forge
 RUN conda install -c pytorch -c fastai fastai
 
 
-# install fastai
-RUN conda install -c pytorch -c fastai fastai
-
-
 # ------------------------------------------------------------------------------
 # container standard dirs
 # ------------------------------------------------------------------------------
@@ -63,3 +59,6 @@ ENV PATH=/src:${PATH}
 # ------------------------------------------------------------------------------
 ADD run_container.py /src/
 ADD inference /src/inference
+
+# EXPOSE ports for email sending
+EXPOSE 25
