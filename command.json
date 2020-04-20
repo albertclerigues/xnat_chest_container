@@ -82,7 +82,7 @@
       "label": "predict-covid-session",
       "description": "Classify wether a patient has COVID19 or not based on his chest xray session",
       "contexts": [
-        "xnat:crSessionData"
+        "xnat:imageSessionData"
       ],
       "external-inputs": [
         {
