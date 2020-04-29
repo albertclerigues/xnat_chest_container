@@ -1,3 +1,0 @@
-* ResNET50 with patch size 512
-
-- Author: Robert Martí

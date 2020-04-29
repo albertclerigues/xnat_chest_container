@@ -58,7 +58,8 @@ ENV PATH=/src:${PATH}
 # Add all source files inside image
 # ------------------------------------------------------------------------------
 ADD run_container.py /src/
-ADD inference /src/inference
+ADD lib /src/lib
+ADD models /src/models
 
 # EXPOSE ports for email sending
 EXPOSE 25
