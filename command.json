@@ -5,7 +5,7 @@
   "version": "1.0",
   "schema-version": "1.0",
   "info-url": "",
-  "image": "covid-prediction:latest",
+  "image": "sergivalverde/covid19_xray_prediction:0.4",
   "type": "docker",
   "command-line": "python /src/run_container.py --project #project_id# --subject #subject_id# --experiment #session_id#",
   "mounts": [

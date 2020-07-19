@@ -3,8 +3,9 @@ import argparse
 from pyxnat import Interface
 from lib.preamble import get_preamble
 from lib.email_utils import send_email
-from lib.image_utils import load_image
-from lib.model_utils import initialize_pred_model, initialize_qa_model
+from COVID19_lib.image_utils import load_image
+from COVID19_lib.inference import infer_session_simple
+from COVID19_lib.metric_utils import *
 
 
 def main(args):
@@ -27,28 +28,12 @@ def main(args):
             current_scan_dicoms = current_scan_dicoms[0]
         scan_dicoms += current_scan_dicoms
 
-    # get models
-    current_path = os.path.dirname(os.path.abspath(__file__))
-    models_path = os.path.join(current_path, 'models')
-    covid_model = initialize_pred_model(models_path)
-    qa_model = initialize_qa_model(models_path)
-
     covid_probs = []
     for scan in scan_dicoms:
-
-        # load the input image as a Fastai image class
-        im = load_image(scan)
-
-        # check orientation
-        # get the probability for the "frontal " class
-        prob_qa = qa_model.predict(im)[2][0].numpy()
-
-        if prob_qa > 0.50:
-            covid_prob = covid_model.predict(im)[2][0].numpy()
-        else:
-            covid_prob = -1
+        im, _ = load_image(scan)
+        covid_prob = infer_session_simple(im)[0]
         covid_probs.append(covid_prob)
-
+        print('DEBUG:', scan, 'PROB:', covid_prob)
     # =====================================================================
     # RESULTS
     # - Write note on XNAT scan with the results
@@ -70,9 +55,12 @@ def main(args):
             print('--------------------------------------------------')
 
             if covid_prob is not -1:
-                scan = session.select('/projects/{}/subjects/{}/experiments/{}/scans/{}'.format(
-                    args.project, args.subject, args.experiment, scan_id))
-                scan.attrs.set('xnat:imageScanData/note', 'p(COVID): {0:.2f}%'.format(covid_prob))
+                scan = session.select(
+                    '/projects/{}/subjects/{}/experiments/{}/scans/{}'.format(
+                        args.project, args.subject, args.experiment, scan_id))
+                scan.attrs.set(
+                    'xnat:imageScanData/note', 'p(COVID): {0:.2f}%'.format(
+                        covid_prob))
 
     except Exception as e:
         session.disconnect()
@@ -92,12 +80,13 @@ def main(args):
                                                    covid_probs):
 
         if covid_prob is not -1:
-            body.append('---------------------------------------------------------------')
+            body.append('Diagnostic results:')
+            body.append('-------------------------------------------------------------------------')
             body.append('Subject ID: {}'.format(args.subject))
-            body.append('DICOM Path: {}'.format(dicom_filepath))
-            body.append('Scan ID: {}'.format(scan_id))
-            body.append('Predicted Probability: {:.2f}%'.format(covid_prob))
-            body.append('---------------------------------------------------------------')
+            # body.append('SUBJECT ID: {}'.format(args.subject))
+            # body.append('DICOM Path: {}'.format(dicom_filepath))
+            body.append('Predicted Probability for COVID-19: {:.2f}%'.format(covid_prob))
+            body.append('-------------------------------------------------------------------------')
 
     # send email
     send_email(session, args, body)

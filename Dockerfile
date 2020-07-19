@@ -25,11 +25,6 @@ RUN pip install --upgrade pip
 # enable neurodebian packages
 # install mricron, dcm2niix, minimal fsl and fsl MNI152 templates
 # ------------------------------------------------------------------------------
-
-#RUN wget -O- http://neuro.debian.net/lists/xenial.us-tn.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
-#RUN apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
-#RUN apt-get update
-#RUN apt-get --assume-yes install mricron fsl fsl-mni152-templates dcm2niix dcmtk imagemagick
 RUN apt update && apt install -y libsm6 libxext6
 
 # ------------------------------------------------------------------------------
@@ -45,7 +40,6 @@ RUN conda install -c pytorch -c fastai fastai
 # ------------------------------------------------------------------------------
 # container standard dirs
 # ------------------------------------------------------------------------------
-
 RUN mkdir /input  # xnat inputs mount
 RUN mkdir /output # xnat outputs mount
 RUN mkdir /data # user intermediate data
@@ -59,7 +53,7 @@ ENV PATH=/src:${PATH}
 # ------------------------------------------------------------------------------
 ADD run_container.py /src/
 ADD lib /src/lib
-ADD models /src/models
+ADD COVID19_lib /src/COVID19_lib
 
 # EXPOSE ports for email sending
 EXPOSE 25
