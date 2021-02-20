@@ -1,0 +1,3 @@
+[submodule "COVID19_lib"]
+	path = COVID19_lib
+	url = git@github.com:sergivalverde/COVID19_lib.git
